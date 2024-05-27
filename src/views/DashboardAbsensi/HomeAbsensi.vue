@@ -1,5 +1,5 @@
 <template>
-<div class="hold-transition theme-primary bg-img" :style="backgroundImageStyle">
+<div class="hold-transition theme-primary bg-img" :style="backgroundImageStyleBGOne">
     <div class="container h-p100">
         <div class="row align-items-center justify-content-md-center h-p100">
             <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
@@ -22,7 +22,7 @@
                         <div class="card-body py-9">
                             <div class="row gx-9 h-100">
                                 <div class="col-sm-6 mb-10 mb-sm-0">
-                                    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-200px h-100" id="foto" style="background-image:url(assets/back-031.jpg);"></div>
+                                    <div class="overlay-wrapper bgi-no-repeat bgi-position-center bgi-size-cover card-rounded min-h-200px h-100" id="foto" :style="backgroundImageStyleBGThree"></div>
                                 </div>
                                 <div class="col-sm-6">
                                     <div class="d-flex flex-column h-100">
@@ -81,7 +81,7 @@
                 <div class="col-sm-6 col-xxl-3">
                     <div class="card card-flush h-xl-100">
                         <div class="card-body text-center pb-5">
-                            <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded" style="background-image: url(assets/back-031.jpg);">
+                            <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded" :style="backgroundImageStyleBGThree">
                                 <span style="color: white !important" class="fw-bold text-gray-800 fs-2hx lh-1 pb-1"><!--<?php echo hari_ini() ?>--></span>
                                 <span style="color: white !important" class="fw-bold text-gray-600 fs-4 pb-5"><!--<?php echo tanggal_indo(date('Y-m-d')) ?> --></span>
                                 <span style="color: white !important" class="fw-bold text-gray-800 fs-3" id="time_now"></span>
@@ -114,9 +114,15 @@ export default {
     name: 'AbsensiView',
     data() {
         return {
-            backgroundImageStyleBG: {
+            backgroundImageStyleBGOne: {
                 backgroundImage: `url(${gambarOne})`
-            }
+            },
+            backgroundImageStyleBGTwo: {
+                backgroundImage: `url(${gambarTwo})`
+            },
+            backgroundImageStyleBGThree: {
+                backgroundImage: `url(${gambarThree})`
+            },
         };
     }
 }
