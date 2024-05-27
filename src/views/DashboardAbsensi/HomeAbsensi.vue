@@ -83,8 +83,8 @@
                         <div class="card-body text-center pb-5">
                             <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded" :style="backgroundImageStyleBGThree">
                                 <span style="color: white !important" class="fw-bold text-gray-800 fs-2hx lh-1 pb-1">{{ hariIni }}</span>
-                                <span style="color: white !important" class="fw-bold text-gray-600 fs-4 pb-5"><!--<?php echo tanggal_indo(date('Y-m-d')) ?> --></span>
-                                <span style="color: white !important" class="fw-bold text-gray-800 fs-3" id="time_now"></span>
+                                <span style="color: white !important" class="fw-bold text-gray-600 fs-4 pb-5">{{ tanggalSekarang }}</span>
+                                <span style="color: white !important" class="fw-bold text-gray-800 fs-3" >{{ waktuSekarang }}</span>
                             </div>
                             <div class="d-flex align-items-end flex-stack mb-1">
                                 <div class="text-start">
@@ -124,16 +124,41 @@ export default {
                 backgroundImage: `url(${gambarThree})`
             },
             hariIni: '',
+            tanggalSekarang :'',
+            waktuSekarang: '',
         };
     },
     created() {
-        this.hariIni = this.getHariIni();
+        this.hariIni = this.getHariIni(); //days
+        this.tanggalSekarang = this.getTanggalSekarang(); //date
+        this.updateWaktu(); //time 
+        setInterval(this.updateWaktu, 1000);
     },
     methods: {
         getHariIni() {
             const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const tanggal = new Date();
             return hari[tanggal.getDay()];
+        },
+        getTanggalSekarang() {
+            const bulan = [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ];
+            const tanggal = new Date();
+            const hari = tanggal.getDate();
+            const namaBulan = bulan[tanggal.getMonth()];
+            const tahun = tanggal.getFullYear();
+            
+            return `${hari} ${namaBulan} ${tahun}`;
+        },
+        updateWaktu() {
+            const tanggal = new Date();
+            const jam = String(tanggal.getHours()).padStart(2, '0');
+            const menit = String(tanggal.getMinutes()).padStart(2, '0');
+            const detik = String(tanggal.getSeconds()).padStart(2, '0');
+            
+            this.waktuSekarang = `${jam}:${menit}:${detik}`;
         }
     }
 }
