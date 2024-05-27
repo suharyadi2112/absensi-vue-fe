@@ -82,7 +82,7 @@
                     <div class="card card-flush h-xl-100">
                         <div class="card-body text-center pb-5">
                             <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded" :style="backgroundImageStyleBGThree">
-                                <span style="color: white !important" class="fw-bold text-gray-800 fs-2hx lh-1 pb-1"><!--<?php echo hari_ini() ?>--></span>
+                                <span style="color: white !important" class="fw-bold text-gray-800 fs-2hx lh-1 pb-1">{{ hariIni }}</span>
                                 <span style="color: white !important" class="fw-bold text-gray-600 fs-4 pb-5"><!--<?php echo tanggal_indo(date('Y-m-d')) ?> --></span>
                                 <span style="color: white !important" class="fw-bold text-gray-800 fs-3" id="time_now"></span>
                             </div>
@@ -123,7 +123,18 @@ export default {
             backgroundImageStyleBGThree: {
                 backgroundImage: `url(${gambarThree})`
             },
+            hariIni: '',
         };
+    },
+    created() {
+        this.hariIni = this.getHariIni();
+    },
+    methods: {
+        getHariIni() {
+            const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+            const tanggal = new Date();
+            return hari[tanggal.getDay()];
+        }
     }
 }
 </script>
