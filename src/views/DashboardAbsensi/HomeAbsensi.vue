@@ -14,7 +14,16 @@
                             </div>
                             <div class="scroll-y me-n5 pe-5 h-400px" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer, #kt_contacts_list_header" data-kt-scroll-wrappers="#kt_content, #kt_contacts_list_body" data-kt-scroll-stretch="#kt_contacts_list, #kt_contacts_main" data-kt-scroll-offset="5px" style="max-height: 595px;" >
 
-                                <div v-for="items in itemsToAbsen" :key="items.id"  class="row d-flex align-items-center">
+                                <ContentLoader viewBox="0 0 250 110" v-if="!loadAbsenTop">
+                                    <rect x="0" y="0" rx="3" ry="3" width="250" height="10" />
+                                    <rect x="20" y="20" rx="3" ry="3" width="220" height="10" />
+                                    <rect x="20" y="40" rx="3" ry="3" width="170" height="10" />
+                                    <rect x="0" y="60" rx="3" ry="3" width="250" height="10" />
+                                    <rect x="20" y="80" rx="3" ry="3" width="200" height="10" />
+                                    <rect x="20" y="100" rx="3" ry="3" width="80" height="10" />
+                                </ContentLoader>
+
+                                <div v-else v-for="items in itemsToAbsen" :key="items.id"  class="row d-flex align-items-center">
                                     <div class="col-2">
                                         <template v-if="items.FotoSiswa == '' || items.FotoSiswa == null">
                                             <div class="user-avatar -small -initial">{{ getFirstCharacter(items.NamaSiswa) }}</div>
@@ -129,7 +138,11 @@ import gambarTwo from '@/assets/back-01.jpg'; // Import gambar
 import gambarThree from '@/assets/back-031.jpg'; // Import gambar
 
 import axios from 'axios';
+import { ContentLoader } from 'vue-content-loader'
 export default {
+    components: {
+        ContentLoader,
+    },
     name: 'AbsensiView',
     data() {
         return {
@@ -147,6 +160,7 @@ export default {
             waktuSekarang: '',
             BaseUrl : import.meta.env.VITE_BASEURL,
             itemsToAbsen: '',
+            loadAbsenTop : false,
             
         };
     },
@@ -177,6 +191,7 @@ export default {
 
         async fetchDataAbsenTop() {
             try { 
+                await new Promise(resolve => setTimeout(resolve, 3000)); //delay
                 const response = await axios(`${this.BaseUrl}/get_absen_top`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
@@ -185,6 +200,7 @@ export default {
                 
                 this.itemsToAbsen = response.data.CData;
                 console.log(this.itemsToAbsen,"cek data absen top")
+                this.loadAbsenTop = true;
 
             } catch (error) {
                 console.error("Error:", error);
