@@ -12,7 +12,24 @@
                                     <span class="fw-bold text-gray-800 cursor-pointer text-hover-primary fs-4 d-block">List Absensi Terbaru</span> <hr/>
                                 </div>
                             </div>
-                            <div class="scroll-y me-n5 pe-5 h-400px" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer, #kt_contacts_list_header" data-kt-scroll-wrappers="#kt_content, #kt_contacts_list_body" data-kt-scroll-stretch="#kt_contacts_list, #kt_contacts_main" data-kt-scroll-offset="5px" style="max-height: 595px;" id="list_siswa"></div>
+                            <div class="scroll-y me-n5 pe-5 h-400px" data-kt-scroll="true" data-kt-scroll-activate="{default: false, lg: true}" data-kt-scroll-max-height="auto" data-kt-scroll-dependencies="#kt_header, #kt_toolbar, #kt_footer, #kt_contacts_list_header" data-kt-scroll-wrappers="#kt_content, #kt_contacts_list_body" data-kt-scroll-stretch="#kt_contacts_list, #kt_contacts_main" data-kt-scroll-offset="5px" style="max-height: 595px;" >
+
+                                <div v-for="items in itemsToAbsen" :key="items.id"  class="row d-flex align-items-center">
+                                    <div class="col-2">
+                                        <template v-if="items.FotoSiswa == '' || items.FotoSiswa == null">
+                                            <div class="user-avatar -small -initial">{{ getFirstCharacter(items.NamaSiswa) }}</div>
+                                        </template>
+                                        <template v-else>
+                                            <div class="user-avatar -small -online-ring" style="background-image: url('https://picsum.photos/200');background-position: center;"></div>
+                                        </template>
+
+                                    </div>
+                                    <div class="col-10 np">
+                                        <span class="t_guru"> {{ items.NamaSiswa }}<br>Kelas {{ items.Kelas }}</span>
+                                    </div>
+                                </div>
+
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,6 +127,8 @@
 import gambarOne from '@/assets/back-04.jpg'; // Import gambar
 import gambarTwo from '@/assets/back-01.jpg'; // Import gambar
 import gambarThree from '@/assets/back-031.jpg'; // Import gambar
+
+import axios from 'axios';
 export default {
     name: 'AbsensiView',
     data() {
@@ -126,6 +145,9 @@ export default {
             hariIni: '',
             tanggalSekarang :'',
             waktuSekarang: '',
+            BaseUrl : import.meta.env.VITE_BASEURL,
+            itemsToAbsen: '',
+            
         };
     },
     created() {
@@ -134,7 +156,43 @@ export default {
         this.updateWaktu(); //time 
         setInterval(this.updateWaktu, 1000);
     },
+    mounted() {
+        this.fetchBothDashboard();
+    },
+
     methods: {
+
+        async fetchBothDashboard() {
+            try {
+                // Menjalankan metode fetch async secara paralel
+                await Promise.all([
+                    this.fetchDataAbsenTop(),
+                ]);
+                
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        },
+        
+
+        async fetchDataAbsenTop() {
+            try { 
+                const response = await axios(`${this.BaseUrl}/get_absen_top`, {
+                    headers: {
+                        Authorization: `Bearer ${this.token}`
+                    },
+                })
+                
+                this.itemsToAbsen = response.data.CData;
+                console.log(this.itemsToAbsen,"cek data absen top")
+
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        },
+        getFirstCharacter(fullName) {
+            return fullName.charAt(0);
+        },
         getHariIni() {
             const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
             const tanggal = new Date();
