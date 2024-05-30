@@ -23,21 +23,42 @@
                                     <rect x="20" y="100" rx="3" ry="3" width="80" height="10" />
                                 </ContentLoader>
 
-                                <div v-else v-for="items in itemsToAbsen" :key="items.id"  class="row d-flex align-items-center">
-                                    <div class="col-2">
-                                        <template v-if="items.FotoSiswa == '' || items.FotoSiswa == null">
-                                            <div class="user-avatar -small -initial">{{ getFirstCharacter(items.NamaSiswa) }}</div>
-                                        </template>
-                                        <template v-else>
-                                            <div class="user-avatar -small -online-ring" style="background-image: url('https://picsum.photos/200');background-position: center;"></div>
-                                        </template>
 
-                                    </div>
-                                    <div class="col-10 np">
-                                        <span class="t_guru"> {{ items.NamaSiswa }}<br>Kelas {{ items.Kelas }}</span>
-                                    </div>
+                                <div v-else v-for="items in itemsToAbsen" :key="items.id"  class="row d-flex align-items-center fade-in-absen">
+                                    
+                            
+                                    <template v-if="items.IDPengajar == '' || items.IDPengajar == null || items.IDPengajar == 0 ">
+                                        <div class="col-2">
+                                            <template v-if="items.FotoSiswa == '' || items.FotoSiswa == null">
+                                                <div class="user-avatar -small -initial">{{ getFirstCharacter(items.NamaSiswa) }}</div>
+                                            </template>
+                                            <template v-else>
+                                                <div class="user-avatar -small -online-ring" style="background-image: url('https://picsum.photos/200');background-position: center;"></div>
+                                            </template>
+
+                                        </div>
+                                        <div class="col-10 np">
+                                            <span class="t_guru"> {{ items.NamaSiswa }}<br>Kelas {{ items.Kelas }}</span>
+                                        </div>
+                                            
+                                    </template>
+                                    <template v-else>
+                                        <div class="row d-flex align-items-center">
+                                            <div class="col-2">
+                                                <template v-if="items.FotoGuru == '' || items.FotoGuru == null">
+                                                    <div class="user-avatar -small -initial">{{ getFirstCharacter(items.NamaGuru) }}</div>
+                                                </template>
+                                                <template v-else>
+                                                    <div class="user-avatar -small -online-ring" style="background-image: url('https://picsum.photos/200'); background-position: center;"></div>
+                                                </template>
+                                            </div>
+                                            <div class="col-10 np">
+                                                <span class="t_guru">{{ items.NamaGuru }}</span>
+                                            </div>
+                                        </div>
+                                    </template>
+
                                 </div>
-
                             </div>
                         </div>
                     </div>
@@ -191,7 +212,7 @@ export default {
 
         async fetchDataAbsenTop() {
             try { 
-                await new Promise(resolve => setTimeout(resolve, 3000)); //delay
+                // await new Promise(resolve => setTimeout(resolve, 3000)); //delay
                 const response = await axios(`${this.BaseUrl}/get_absen_top`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
