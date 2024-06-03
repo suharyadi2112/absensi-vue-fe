@@ -1,5 +1,5 @@
 <template>
-<div class="hold-transition theme-primary bg-img" :style="backgroundImageStyleBGOne">
+<div class="hold-transition theme-primary bg-img" :style="backgroundImageStyleBGFour">
     <div class="container h-p100">
         <div class="row align-items-center justify-content-md-center h-p100">
             <div class="row g-5 g-xl-10 mb-5 mb-xl-10">
@@ -141,7 +141,7 @@
                             </div>
                             
                             <div class="d-flex align-items-end flex-stack mb-1 pt-5">
-                                <input type="text" name="frm_code" id="frm_code" class="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="Masukan No Kartu">
+                                <input type="text" name="form_code" id="form_code" v-model="formData.form_code" class="form-control form-control-lg form-control-solid mb-3 mb-lg-0" placeholder="Masukan No Kartu" @keyup.enter="submitFormSubmit">
                             </div>
                         </div>
                     
@@ -154,9 +154,11 @@
 </div>
 </template>
 <script>
+
 import gambarOne from '@/assets/back-04.jpg'; // Import gambar
 import gambarTwo from '@/assets/back-01.jpg'; // Import gambar
 import gambarThree from '@/assets/back-031.jpg'; // Import gambar
+import gambarFour from '@/assets/bgnewdua.jpg'; // Import gambar
 
 import axios from 'axios';
 import { ContentLoader } from 'vue-content-loader'
@@ -167,6 +169,11 @@ export default {
     name: 'AbsensiView',
     data() {
         return {
+
+            formData : {
+                form_code : '',
+            },
+
             backgroundImageStyleBGOne: {
                 backgroundImage: `url(${gambarOne})`
             },
@@ -176,13 +183,18 @@ export default {
             backgroundImageStyleBGThree: {
                 backgroundImage: `url(${gambarThree})`
             },
+            backgroundImageStyleBGFour: {
+                backgroundImage: `url(${gambarFour})`
+            },
             hariIni: '',
             tanggalSekarang :'',
             waktuSekarang: '',
             BaseUrl : import.meta.env.VITE_BASEURL,
             itemsToAbsen: '',
             loadAbsenTop : false,
-            
+            loadingSubmitAbsen: false,
+            loadsubmit : false,
+            error : {},
         };
     },
     created() {
@@ -227,6 +239,49 @@ export default {
                 console.error("Error:", error);
             }
         },
+
+        // submit form pengaduan
+        submitFormSubmit() {
+
+            this.loadingSubmitAbsen = true //progres btn
+            this.error = {};
+            //validation
+            const requiredFields = ['form_code'];
+            requiredFields.forEach(field => { 
+                if (!this.formData[field]) {
+                    this.error[field] = true;
+                    alert("form code belum diisi")
+                    setTimeout(()=>{ this.loadingSubmitAbsen = false },1000);
+                }else{
+                    this.error[field] = false;// fill
+                }
+            });
+            const hasErrors = requiredFields.some(field => this.error[field]);
+            if (!hasErrors) {
+                this.sendStoreAbsen();
+            }
+        },
+
+        //store form data
+        async sendStoreAbsen() {
+            this.loadsubmit = true
+            try {
+                const response = await axios.post(`${this.BaseUrl}/post_absen`, this.formData, {
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                });
+                return response
+
+            } catch (error) {
+                console.log(error)
+               alert("terjadi kesalahan")
+            } finally { 
+                this.loadsubmit = false
+            }
+        },
+
+
         getFirstCharacter(fullName) {
             return fullName.charAt(0);
         },
