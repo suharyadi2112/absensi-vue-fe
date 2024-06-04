@@ -30,7 +30,7 @@
                                     <template v-if="items.IDPengajar == '' || items.IDPengajar == null || items.IDPengajar == 0 ">
                                         <div class="col-2">
                                             <template v-if="items.FotoSiswa == '' || items.FotoSiswa == null">
-                                                <div class="user-avatar -small -initial">{{ getFirstCharacter(items.NamaSiswa) }}</div>
+                                                <div class="user-avatar -small -initial">{{ getFirstCharacter(items.Nama) }}</div>
                                             </template>
                                             <template v-else>
                                                 <div class="user-avatar -small -online-ring" style="background-image: url('https://picsum.photos/200');background-position: center;"></div>
@@ -38,7 +38,7 @@
 
                                         </div>
                                         <div class="col-10 np">
-                                            <span class="t_guru"> {{ items.NamaSiswa }}<br>Kelas {{ items.Kelas }}</span>
+                                            <span class="t_guru"> {{ items.Nama }}<br>Kelas {{ items.Kelas }}</span>
                                         </div>
                                             
                                     </template>
@@ -76,7 +76,7 @@
                                         <div class="mb-7">
                                             <div class="mb-6">
                                                 <span class="text-gray-400 fs-7 fw-bold me-2 d-block lh-1 pb-1">{{ itemAfterPost.FormCode !== null && itemAfterPost.FormCode !== '' ? itemAfterPost.FormCode : '-' }}</span>
-                                                <span class="text-gray-800 text-hover-primary fs-1 fw-bold">{{ itemAfterPost.NamaSiswa !== null && itemAfterPost.NamaSiswa !== '' ? itemAfterPost.NamaSiswa : '-' }}</span>
+                                                <span class="text-gray-800 text-hover-primary fs-1 fw-bold">{{ itemAfterPost.Nama !== null && itemAfterPost.Nama !== '' ? itemAfterPost.Nama : '-' }}</span>
                                             </div>
                                             <div class="d-flex align-items-center flex-wrap d-grid gap-2">
                                                 <div class="d-flex align-items-center me-5 me-xl-13">
@@ -89,7 +89,7 @@
                                                     </div>
                                                     <div class="m-0">
                                                         <span class="fw-semibold text-gray-400 d-block fs-8">Alamat</span>
-                                                        <span class="fw-bold text-gray-800 text-hover-primary fs-7" id="alamat">-</span>
+                                                        <span class="fw-bold text-gray-800 text-hover-primary fs-7" id="alamat">{{ itemAfterPost.Alamat !== null && itemAfterPost.Alamat !== '' ? itemAfterPost.Alamat : '-' }}</span>
                                                     </div>
                                                 </div>
                                                 <div class="d-flex align-items-center">
@@ -104,7 +104,7 @@
                                                     </div>
                                                     <div class="m-0">
                                                         <span class="fw-semibold text-gray-400 d-block fs-8">Kelas</span>
-                                                        <span class="fw-bold text-gray-800 text-hover-primary fs-7" id="kelas_siswa">-</span>
+                                                        <span class="fw-bold text-gray-800 text-hover-primary fs-7" id="kelas_siswa">{{ itemAfterPost.Kelas !== null && itemAfterPost.Kelas !== '' ? itemAfterPost.Kelas : '-' }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -112,7 +112,7 @@
                                         <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded">
                                             <span class="fw-semibold text-gray-600 fs-7 pb-1">Rincian Absensi</span>
                                             <span class="fw-bold text-gray-800 fs-2hx lh-1 pb-1" id="hari_absen">-</span>
-                                            <span class="fw-bold text-gray-600 fs-4 pb-5" id="tgl_absen">-</span>
+                                            <span class="fw-bold text-gray-600 fs-4 pb-5" id="tgl_absen">{{ formattedDateAfterAbsen() }}</span>
                                             <span class="fw-semibold text-gray-600 fs-7 pb-1">Jam Absensi</span>
                                             <span class="fw-bold text-gray-800 fs-3" id="jam_absen">-</span>
                                         </div>
@@ -128,7 +128,7 @@
                 <div class="col-sm-6 col-xxl-3">
                     <div class="card card-flush h-xl-100">
                         <div class="card-body text-center pb-5">
-                            <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded" :style="backgroundImageStyleBGThree">
+                            <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded" :style="backgroundImageStyleBGFive">
                                 <span style="color: white !important" class="fw-bold text-gray-800 fs-2hx lh-1 pb-1">{{ hariIni }}</span>
                                 <span style="color: white !important" class="fw-bold text-gray-600 fs-4 pb-5">{{ tanggalSekarang }}</span>
                                 <span style="color: white !important" class="fw-bold text-gray-800 fs-3" >{{ waktuSekarang }}</span>
@@ -159,6 +159,7 @@ import gambarOne from '@/assets/back-04.jpg'; // Import gambar
 import gambarTwo from '@/assets/back-01.jpg'; // Import gambar
 import gambarThree from '@/assets/back-031.jpg'; // Import gambar
 import gambarFour from '@/assets/bgnewdua.jpg'; // Import gambar
+import gambarFive from '@/assets/back-031.jpg'; // Import gambar
 
 import axios from 'axios';
 import { ContentLoader } from 'vue-content-loader'
@@ -185,18 +186,16 @@ export default {
                 form_code : '',
             },
 
-            backgroundImageStyleBGOne: {
-                backgroundImage: `url(${gambarOne})`
-            },
-            backgroundImageStyleBGTwo: {
-                backgroundImage: `url(${gambarTwo})`
-            },
-            backgroundImageStyleBGThree: {
-                backgroundImage: `url(${gambarThree})`
-            },
-            backgroundImageStyleBGFour: {
-                backgroundImage: `url(${gambarFour})`
-            },
+            arr_bulan: [
+                'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+                'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+            ],
+
+            backgroundImageStyleBGOne: {  backgroundImageOne: `url(${gambarOne})`},
+            backgroundImageStyleBGTwo: { backgroundImage: `url(${gambarTwo})`},
+            backgroundImageStyleBGThree: { backgroundImage: `url(${gambarThree})`},
+            backgroundImageStyleBGFour: { backgroundImage: `url(${gambarFour})`},
+            backgroundImageStyleBGFive: { backgroundImage: `url(${gambarFive})`},
             hariIni: '',
             tanggalSekarang :'',
             waktuSekarang: '',
@@ -248,7 +247,8 @@ export default {
                     },
                 })
                 
-                this.itemsToAbsen = response.data.CData;
+                this.itemsToAbsen = response.data.CData;                
+             
                 console.log(this.itemsToAbsen,"cek data absen top")
                 this.loadAbsenTop = true;
 
@@ -289,6 +289,21 @@ export default {
                     },
                 });
                 this.itemAfterPost = response.data.CData
+
+                   //cek kesesuaian foto
+                   if (this.itemAfterPost.Tipe === 'siswa') {
+                    const siswaFoto = `url(https://picsum.photos/400/500)`;
+                    this.backgroundImageStyleBGThree.backgroundImage = siswaFoto
+                } else if (this.itemAfterPost.Tipe === 'guru') {
+                    // return `url(/../img/guru/${this.res.foto})`;
+                    const guruFoto =  `url(https://picsum.photos/400/500)`;
+                    this.backgroundImageStyleBGThree.backgroundImage = guruFoto
+                } else {
+                    this.backgroundImageStyleBGThree.backgroundImage = gambarThree
+
+                    console.log("masuk ke default foto")
+                }
+
                 return response
 
             } catch (error) {
@@ -327,6 +342,31 @@ export default {
             const detik = String(tanggal.getSeconds()).padStart(2, '0');
             
             this.waktuSekarang = `${jam}:${menit}:${detik}`;
+        },
+
+
+        formattedDateAfterAbsen() {
+            if (this.itemAfterPost.AbsenAt) {
+                const date = new Date(this.itemAfterPost.AbsenAt);
+                if (!isNaN(date.getTime())) {
+                    const day = this.addZero(date.getDate());
+                    const month = this.arr_bulan[date.getMonth()];
+                    const year = this.addZero(date.getFullYear());
+                    return `${day} ${month} ${year}`;
+                } else {
+                    return '-';
+                }
+            } else {
+                return '-';
+            }
+        },
+
+        addZero(i) {
+            if (i < 10) {
+                return "0" + i;
+            } else {
+                return i;
+            }
         }
     }
 }
