@@ -25,8 +25,6 @@
 
 
                                 <div v-else v-for="items in itemsToAbsen" :key="items.id"  class="row d-flex align-items-center fade-in-absen">
-                                    
-                            
                                     <template v-if="items.IDPengajar == '' || items.IDPengajar == null || items.IDPengajar == 0 ">
                                         <div class="col-2">
                                             <template v-if="items.FotoSiswa == '' || items.FotoSiswa == null">
@@ -111,10 +109,10 @@
                                         </div>
                                         <div class="d-flex flex-column border border-1 border-gray-300 text-center pt-5 pb-7 mb-8 card-rounded">
                                             <span class="fw-semibold text-gray-600 fs-7 pb-1">Rincian Absensi</span>
-                                            <span class="fw-bold text-gray-800 fs-2hx lh-1 pb-1" id="hari_absen">-</span>
-                                            <span class="fw-bold text-gray-600 fs-4 pb-5" id="tgl_absen">{{ formattedDateAfterAbsen() }}</span>
+                                            <span class="fw-bold text-gray-800 fs-2hx lh-1 pb-1">{{ hariAbsen }}</span>
+                                            <span class="fw-bold text-gray-600 fs-4 pb-5">{{ formattedDateAfterAbsen() }}</span>
                                             <span class="fw-semibold text-gray-600 fs-7 pb-1">Jam Absensi</span>
-                                            <span class="fw-bold text-gray-800 fs-3" id="jam_absen">-</span>
+                                            <span class="fw-bold text-gray-800 fs-3">{{ jamAbsen }}</span>
                                         </div>
                                         <div class="d-flex flex-stack mt-auto bd-highlight">
                                         </div>
@@ -186,11 +184,13 @@ export default {
                 form_code : '',
             },
 
-            arr_bulan: [
+            arrBulan: [
                 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
                 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
             ],
 
+            arrDay: ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'],
+            
             backgroundImageStyleBGOne: {  backgroundImageOne: `url(${gambarOne})`},
             backgroundImageStyleBGTwo: { backgroundImage: `url(${gambarTwo})`},
             backgroundImageStyleBGThree: { backgroundImage: `url(${gambarThree})`},
@@ -206,7 +206,7 @@ export default {
             loadingSubmitAbsen: false,
             loadsubmit : false,
             error : {},
-
+            tanggalAbsen: '-', 
             messages : [],
         };
     },
@@ -223,6 +223,24 @@ export default {
         });
         this.fetchBothDashboard();
     },
+    computed: {
+        hariAbsen() {
+            if (this.itemAfterPost.AbsenAt) {
+            const tanggalAbsen = new Date(this.itemAfterPost.AbsenAt);
+            const hariIndex = tanggalAbsen.getDay();
+            return this.arrDay[hariIndex];
+            } else {
+            return '-';
+            }
+        },
+        jamAbsen() {
+            if (this.itemAfterPost.AbsenAt) {
+            return new Date(this.itemAfterPost.AbsenAt).toTimeString().slice(0, 5);
+            } else {
+            return '-';
+            }
+        }
+    },
     methods: {
 
         async fetchBothDashboard() {
@@ -236,11 +254,10 @@ export default {
                 console.error('Error:', error);
             }
         },
-        
-
         async fetchDataAbsenTop() {
+            this.loadAbsenTop = false;
             try { 
-                // await new Promise(resolve => setTimeout(resolve, 3000)); //delay
+                // await new Promise(resolve => setTimeout(resolve, 2000)); //delay
                 const response = await axios(`${this.BaseUrl}/get_absen_top`, {
                     headers: {
                         Authorization: `Bearer ${this.token}`
@@ -249,14 +266,13 @@ export default {
                 
                 this.itemsToAbsen = response.data.CData;                
              
-                console.log(this.itemsToAbsen,"cek data absen top")
+                // console.log(this.itemsToAbsen,"cek data absen top")
                 this.loadAbsenTop = true;
 
             } catch (error) {
                 console.error("Error:", error);
             }
         },
-
         // submit form pengaduan
         submitFormSubmit() {
 
@@ -278,7 +294,6 @@ export default {
                 this.sendStoreAbsen();
             }
         },
-
         //store form data
         async sendStoreAbsen() {
             this.loadsubmit = true
@@ -290,8 +305,8 @@ export default {
                 });
                 this.itemAfterPost = response.data.CData
 
-                   //cek kesesuaian foto
-                   if (this.itemAfterPost.Tipe === 'siswa') {
+                //cek kesesuaian foto
+                if (this.itemAfterPost.Tipe === 'siswa') {
                     const siswaFoto = `url(https://picsum.photos/400/500)`;
                     this.backgroundImageStyleBGThree.backgroundImage = siswaFoto
                 } else if (this.itemAfterPost.Tipe === 'guru') {
@@ -303,7 +318,7 @@ export default {
 
                     console.log("masuk ke default foto")
                 }
-
+                this.loadAbsenTop = true;
                 return response
 
             } catch (error) {
@@ -313,8 +328,6 @@ export default {
                 this.loadsubmit = false
             }
         },
-
-
         getFirstCharacter(fullName) {
             return fullName.charAt(0);
         },
@@ -343,14 +356,12 @@ export default {
             
             this.waktuSekarang = `${jam}:${menit}:${detik}`;
         },
-
-
         formattedDateAfterAbsen() {
             if (this.itemAfterPost.AbsenAt) {
                 const date = new Date(this.itemAfterPost.AbsenAt);
                 if (!isNaN(date.getTime())) {
                     const day = this.addZero(date.getDate());
-                    const month = this.arr_bulan[date.getMonth()];
+                    const month = this.arrBulan[date.getMonth()];
                     const year = this.addZero(date.getFullYear());
                     return `${day} ${month} ${year}`;
                 } else {
@@ -360,7 +371,6 @@ export default {
                 return '-';
             }
         },
-
         addZero(i) {
             if (i < 10) {
                 return "0" + i;
