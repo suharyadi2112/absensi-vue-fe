@@ -75,8 +75,8 @@
                                     <div class="d-flex flex-column h-100">
                                         <div class="mb-7">
                                             <div class="mb-6">
-                                                <span class="text-gray-400 fs-7 fw-bold me-2 d-block lh-1 pb-1"><span id="kode">-</span></span>
-                                                <span class="text-gray-800 text-hover-primary fs-1 fw-bold"><span id="nama">-</span></span>
+                                                <span class="text-gray-400 fs-7 fw-bold me-2 d-block lh-1 pb-1">{{ itemAfterPost.FormCode !== null && itemAfterPost.FormCode !== '' ? itemAfterPost.FormCode : '-' }}</span>
+                                                <span class="text-gray-800 text-hover-primary fs-1 fw-bold">{{ itemAfterPost.NamaSiswa !== null && itemAfterPost.NamaSiswa !== '' ? itemAfterPost.NamaSiswa : '-' }}</span>
                                             </div>
                                             <div class="d-flex align-items-center flex-wrap d-grid gap-2">
                                                 <div class="d-flex align-items-center me-5 me-xl-13">
@@ -162,6 +162,17 @@ import gambarFour from '@/assets/bgnewdua.jpg'; // Import gambar
 
 import axios from 'axios';
 import { ContentLoader } from 'vue-content-loader'
+import Pusher from 'pusher-js';
+
+// ------- PUSHER --------//
+Pusher.logToConsole = true;
+var pusher = new Pusher('ac401f3c35a2e5a62a81', {
+    cluster: 'ap1'
+});
+
+var channel = pusher.subscribe('absensi-channel');
+// -----------------------//
+
 export default {
     components: {
         ContentLoader,
@@ -191,10 +202,13 @@ export default {
             waktuSekarang: '',
             BaseUrl : import.meta.env.VITE_BASEURL,
             itemsToAbsen: '',
+            itemAfterPost : {},
             loadAbsenTop : false,
             loadingSubmitAbsen: false,
             loadsubmit : false,
             error : {},
+
+            messages : [],
         };
     },
     created() {
@@ -204,9 +218,12 @@ export default {
         setInterval(this.updateWaktu, 1000);
     },
     mounted() {
+        channel.bind('absensi-event', (data) => {
+            // this.messages.push(JSON.stringify(data));
+            this.fetchDataAbsenTop()
+        });
         this.fetchBothDashboard();
     },
-
     methods: {
 
         async fetchBothDashboard() {
@@ -271,6 +288,7 @@ export default {
                         'Content-Type': 'application/json'
                     },
                 });
+                this.itemAfterPost = response.data.CData
                 return response
 
             } catch (error) {
