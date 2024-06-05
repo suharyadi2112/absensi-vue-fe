@@ -15,7 +15,7 @@ app.use(Toast, {
   transition: "Vue-Toastification__bounce",
   maxToasts: 7,
   newestOnTop: true,
-  timeout: 2006,
+  timeout: 3006,
 });
 
 app.use(router);

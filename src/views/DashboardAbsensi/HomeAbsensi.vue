@@ -174,6 +174,8 @@ var pusher = new Pusher('ac401f3c35a2e5a62a81', {
 var channel = pusher.subscribe('absensi-channel');
 // -----------------------//
 
+const toast = useToast();//toast
+
 
 export default {
     components: {
@@ -222,7 +224,6 @@ export default {
     mounted() {
         channel.bind('absensi-event', (data) => {
             // this.messages.push(JSON.stringify(data));
-            const toast = useToast();
             toast.success(`success - ${data.formCode}`)
 
             this.fetchDataAbsenTop()
@@ -326,8 +327,10 @@ export default {
                 return response
 
             } catch (error) {
-                console.log(error)
-               alert("terjadi kesalahan")
+                console.log(error.response.data)
+                if (error.response.data.BMessage.Message) {
+                    toast.warning(error.response.data.BMessage.Message)
+                }
             } finally { 
                 this.loadsubmit = false
             }
