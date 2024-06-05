@@ -163,6 +163,8 @@ import axios from 'axios';
 import { ContentLoader } from 'vue-content-loader'
 import Pusher from 'pusher-js';
 
+import { useToast } from 'vue-toastification';
+
 // ------- PUSHER --------//
 Pusher.logToConsole = true;
 var pusher = new Pusher('ac401f3c35a2e5a62a81', {
@@ -171,6 +173,7 @@ var pusher = new Pusher('ac401f3c35a2e5a62a81', {
 
 var channel = pusher.subscribe('absensi-channel');
 // -----------------------//
+
 
 export default {
     components: {
@@ -219,6 +222,9 @@ export default {
     mounted() {
         channel.bind('absensi-event', (data) => {
             // this.messages.push(JSON.stringify(data));
+            const toast = useToast();
+            toast.success(`success - ${data.formCode}`)
+
             this.fetchDataAbsenTop()
         });
         this.fetchBothDashboard();
@@ -226,23 +232,22 @@ export default {
     computed: {
         hariAbsen() {
             if (this.itemAfterPost.AbsenAt) {
-            const tanggalAbsen = new Date(this.itemAfterPost.AbsenAt);
-            const hariIndex = tanggalAbsen.getDay();
+                const tanggalAbsen = new Date(this.itemAfterPost.AbsenAt);
+                const hariIndex = tanggalAbsen.getDay();
             return this.arrDay[hariIndex];
             } else {
-            return '-';
+                return '-';
             }
         },
         jamAbsen() {
             if (this.itemAfterPost.AbsenAt) {
-            return new Date(this.itemAfterPost.AbsenAt).toTimeString().slice(0, 5);
+                return new Date(this.itemAfterPost.AbsenAt).toTimeString().slice(0, 5);
             } else {
-            return '-';
+                return '-';
             }
         }
     },
     methods: {
-
         async fetchBothDashboard() {
             try {
                 // Menjalankan metode fetch async secara paralel
@@ -264,8 +269,7 @@ export default {
                     },
                 })
                 
-                this.itemsToAbsen = response.data.CData;                
-             
+                this.itemsToAbsen = response.data.CData;       
                 // console.log(this.itemsToAbsen,"cek data absen top")
                 this.loadAbsenTop = true;
 
