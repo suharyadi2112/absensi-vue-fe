@@ -167,8 +167,8 @@ import { useToast } from 'vue-toastification';
 
 // ------- PUSHER --------//
 Pusher.logToConsole = true;
-var pusher = new Pusher('ac401f3c35a2e5a62a81', {
-    cluster: 'ap1'
+var pusher = new Pusher(import.meta.env.VITE_KEY_PUSHER, {
+    cluster: import.meta.env.VITE_CLUSTER_PUSHER
 });
 
 var channel = pusher.subscribe('absensi-channel');
@@ -224,7 +224,7 @@ export default {
     mounted() {
         channel.bind('absensi-event', (data) => {
             // this.messages.push(JSON.stringify(data));
-            toast.success(`success - ${data.formCode}`)
+            toast.success(`Berhasil Absensi - ${data.formCode}`)
 
             this.fetchDataAbsenTop()
         });
