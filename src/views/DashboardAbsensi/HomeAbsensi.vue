@@ -31,7 +31,9 @@
                                                 <div class="user-avatar -small -initial">{{ getFirstCharacter(items.Nama) }}</div>
                                             </template>
                                             <template v-else>
-                                                <div class="user-avatar -small -online-ring" style="background-image: url('https://picsum.photos/200');background-position: center;"></div>
+                                                <div class="user-avatar -small -online-ring" 
+                                                :style="{ backgroundImage: 'url(https://sman5karimun.etpsmart.my.id/img/siswa/' + items.FotoSiswa + ')', backgroundPosition: 'initial' }">
+                                           </div>
                                             </template>
 
                                         </div>
@@ -224,8 +226,7 @@ export default {
     mounted() {
         channel.bind('absensi-event', (data) => {
             // this.messages.push(JSON.stringify(data));
-            toast.success(`Berhasil Absensi - ${data.formCode}`)
-
+            // toast.success(`Berhasil Absensi - ${data.formCode}`)
             this.fetchDataAbsenTop()
         });
         this.fetchBothDashboard();
@@ -312,11 +313,12 @@ export default {
 
                 //cek kesesuaian foto
                 if (this.itemAfterPost.Tipe === 'siswa') {
-                    const siswaFoto = `url(https://picsum.photos/400/500)`;
+                    toast.success(`Berhasil Absensi - ${this.itemAfterPost.Nama}`)
+                    const siswaFoto = `url(https://sman5karimun.etpsmart.my.id/img/siswa/${this.itemAfterPost.Foto})`;
                     this.backgroundImageStyleBGThree.backgroundImage = siswaFoto
                 } else if (this.itemAfterPost.Tipe === 'guru') {
-                    // return `url(/../img/guru/${this.res.foto})`;
-                    const guruFoto =  `url(https://picsum.photos/400/500)`;
+                    toast.success(`Berhasil Absensi - ${this.itemAfterPost.Nama}`)
+                    const guruFoto =  `url(https://sman5karimun.etpsmart.my.id/img/guru/${this.itemAfterPost.Foto})`;
                     this.backgroundImageStyleBGThree.backgroundImage = guruFoto
                 } else {
                     this.backgroundImageStyleBGThree.backgroundImage = gambarThree
